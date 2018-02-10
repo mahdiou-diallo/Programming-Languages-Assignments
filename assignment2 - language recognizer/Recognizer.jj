@@ -1,0 +1,156 @@
+PARSER_BEGIN(Recognizer)
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+/** Recognizer for the THK-PL Language. */
+public class Recognizer {
+
+  /** Main entry point. */
+  public static void main(String args[]) throws ParseException {
+
+    try{
+      Recognizer parser = new Recognizer(new FileInputStream(args[0]));
+      parser.THKPL();
+      System.out.println("Syntax is correct.");
+    }
+    catch (FileNotFoundException e) {System.out.println("File not found."); }
+    catch (ParseException e) { System.out.println("\n---> Syntax error: " + e.getMessage()); }
+    catch (Exception e) {System.out.println("\n---> Error: " + e.getMessage()); }
+    
+  }
+
+}
+
+PARSER_END(Recognizer)
+
+SKIP : { " " | "\t" | "\n" | "\r" | < "!!" (~["\n", "\r"])* >}
+
+//-----------keywords
+TOKEN:
+{
+	< PROGRAM: "PROGRAM" >
+|	< VARIABLES: "VARIABLES" >	|	< STATEMENTS: "STATEMENTS" >
+|	< WRITE: "WRITE" >	|	< READ: "READ" >
+	//---infix operators
+|	< PLUS: "PLUS" >	|	< MINUS: "MINUS" >	|	< ASTERISK: "ASTERISK" >	|	< SLASH: "SLASH" >
+	//---prefix operators
+|	< ADD: "ADD" >	|	< SUBTRACT: "SUBTRACT" >	|	< MULTIPLY: "MULTIPLY" >	|	< DIVIDE: "DIVIDE" >
+|	< EQUALS: "EQUALS" >
+}
+TOKEN: 
+{
+	< ID: ["a"-"z","A"-"Z"] (["a"-"z","A"-"Z","0"-"9"])* >
+|	< INT_LIT: (["+","-"])? (["0"-"9"])+ >
+|	< STR_LIT: "\'" (~[ "\n", "\r", "\'" ])* "\'" >
+|	< ASSIGN: ":=" >
+|	< L_PAREN: "(" >	|	< R_PAREN: ")" >	|	< EOL: ";" >
+}
+
+void THKPL() :
+{}
+{
+  	< PROGRAM > < ID > < EOL > 
+	declaration_section()
+	main_section()
+
+	< EOF >
+}
+void declaration_section():
+{}
+{
+	< VARIABLES >
+	variable_list() < EOL >
+}
+void variable_list():
+{}
+{
+	variable_def() [ "," variable_list()]
+}
+void variable_def():
+{}
+{
+	variable_name() [ < EQUALS > < INT_LIT >]
+}
+void variable_name():
+{}
+{
+	< ID >
+}
+void main_section():
+{}
+{
+	< STATEMENTS >
+	(
+		statement() < EOL >
+	)*
+}
+void statement():
+{}
+{
+	input_statement() | output_statement() | assignment_statement()
+}
+
+void input_statement():
+{}
+{
+	< READ > message() variable_name()
+}
+void output_statement():
+{}
+{
+	< WRITE > message()  [ expression() ]
+}
+void message():
+{}
+{
+	< STR_LIT >
+}
+
+void assignment_statement():
+{}
+{
+	variable_name() < ASSIGN > expression()
+}
+void expression():
+{}
+{
+	LOOKAHEAD( operator() ) prefix_expression() | LOOKAHEAD(num() num()) postfix_expression() | infix_expression()
+}
+
+void infix_expression():
+{}
+{
+	term() ( ( < PLUS > | < MINUS > ) term() )*
+}
+void term():
+{}
+{
+	factor() ( ( < ASTERISK > | < SLASH > ) factor() )*
+}
+void factor():
+{}
+{
+	num() | < L_PAREN > infix_expression() < R_PAREN >
+}
+
+void prefix_expression():
+{}
+{
+	num() | operator() prefix_expression() prefix_expression()
+}
+void postfix_expression():
+{}
+{
+	num() ( num() operator() )+
+}
+void operator():
+{}
+{
+	< ADD > | < SUBTRACT > | < MULTIPLY > | < DIVIDE >
+}
+void num():
+{}
+{
+	< INT_LIT > | variable_name()
+}

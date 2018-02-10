@@ -1,0 +1,54 @@
+Scenario
+You are working as a developer at a software company. Your company has already announced its new chat program, Chatty, to be published on November 26th, 2017 at 23:55. The development process was still ongoing until your rival company made a job offer to the developer of Chatty. When examined, it was seen that previous developer had already implemented some necessary libraries with Go, but the client and server still needs to be completed. No one in the company knows the Go language, so the boss picked you to complete the project. As a result, you are totally on your own in completing this task.
+Details
+In this assignment, you are expected to implement a small chat application (including two components: client & server) with Go.
+Go is an open-source programming language created by a team at Google. Go is a systems language with roots in C, C++, and other languages. Version 1 of Go was released in 2012 and is under active development.
+Chatty is a small chat application. Chatty supports sending and receiving messages in a user-to-user manner (like Google Hangouts) instead of broadcast (like IRC or group chats). This means that if three users (Hakan, Ayça, and Umur) are connected to the same server, Hakan can send a message to Ayça that will not be delivered to Umur. The server is centralized (for simplicity) and has the responsibility of routing messages to and from the connected users of the system.
+A small amount of library code to help standardize the communication between a client and server is provided: chatty/proto.go is a protocol library so that everyone uses the same format for sending/receiving messages and chatty/listener.go is a TCP listener library so that everyone uses unique random listening ports. Since everyone will be using the same protocol, you can use it to chat with your friends.
+Protocol
+The ChattyMsg struct along with the Purpose enum contained in chatty/proto.go define the messages that are exchanged between clients and a server. All messages between a client and server should use gob encoding1 to send ChattyMsg structs. The support code makes use of these packages to serialize and deserialize messages for you.
+
+ChattyMsg Struct
+A message contains three data parts: Username string, Body string, Action Purpose.
+The type of message and the meaning of the fields is defined by its Purpose, which can be any of the following:
+• CONNECT:
+o Description: upon starting a client, it sends a message of this type to initiate a connection to the server for future message transport.
+o ChattyMsg.Username contains the username of the client attempting to connect with the server.
+o ChattyMsg.Body is not defined for this type of message.
+• MSG:
+o Description: a chat message is sent from a client to another user (may be itself).
+o ChattyMsg.Username is the username that the message is destined for (e.g. Hakan).
+o ChattyMsg.Body contains the actual message (e.g. hello world).
+• LIST:
+o Description: a client can ask the server which users are currently connected
+o ChattyMsg.Username is not defined for this type of message.
+o ChattyMsg.Body is empty if this is a request (from client to server) and contains a list of connected users if it is a response (from server to client).
+• ERROR:
+o Description: if the server cannot satisfy a request for whatever reason, it should send an error message back to the client saying why it cannot.
+o ChattyMsg.Username is not defined for this type of message.
+o ChattyMsg.Body contains the error string.
+• DISCONNECT:
+o Description: a client can ask to be disconnected gracefully from the server
+o ChattyMsg.Username is not defined for this type of message.
+o ChattyMsg.Body is not defined for this type of message.
+	// Enum
+	type Purpose int
+	const (
+		CONNECT Purpose = 1 + iota
+		MSG
+		LIST
+		ERROR
+		DISCONNECT
+	)
+	type ChattyMsg struct {
+		Username string
+		Body string
+		Action Purpose
+	}
+
+Server
+The server is responsible for conforming to the protocol detailed in the previous section. Its primary responsibility is to route messages between client users. You must use Go routines and may use Go channels to deal with concurrency. Remember that, you must find a way for data to be accessed safely with no race conditions in concurrent programming. When programming with Go routines and channels, you may find places where mutexes will come in handy.
+The server needs to listen for incoming connections on a defined port, when started. This part is provided to you in the listener library (chatty/listener.go). You must use the function OpenListener()(net.Listener, int, error) to do this. It returns a Go net.Listener object, an integer value representing which port it is listening and an error (this is nil if there were no errors). The remainder of the server design and structure is left up to you.
+
+Client
+Upon starting up, the Chatty client should connect to a user defined Chatty server. From there, it should take user input (e.g. via a command prompt) to send and receive messages between it and the server. Overall design of this portion is left to your best judgment.

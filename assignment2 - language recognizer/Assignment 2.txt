@@ -1,0 +1,42 @@
+In this assignment, you are expected to implement a language recognizer for the THK-PL Language using JavaCC (Java compiler compiler). Grammar description of the THK-PL Language is given in EBNF below. Your implementation should read a file and decide whether the content of the file is in or not in THK-PL.
+Implementation
+Use JavaCC for implementing your recognizer. JavaCC is both lexical analyzer and parser generator in Java language.
+For incremental development, you may consider handling each expression notation in turn, and implementing the next one only after you are sure the previous one works properly.
+References
+JavaCC can be freely downloaded from its homepage of https://javacc.org. Java (both JDK and JVM) is required with the latest version (version 6.0) of JavaCC.
+For help, you should examine the official website:
+• Documentation: https://javacc.org/doc
+• Lookahead: https://javacc.org/tutorials/lookahead
+• FAQ: http://www.engr.mun.ca/~theo/JavaCC-FAQ/javacc-faq-moz.htm
+Also, a simple starter code and a tutorial will be provided on Moodle.
+Execution
+After downloading the JavaCC as a zip file (726 KB), extract it into the same folder with your code file and run the below given command in terminal to execute it:
+java -cp .\javacc-6.0\bin\lib\javacc.jar javacc fileName.jj
+If your implementation compiles without any errors, 5 new .java files must be generated automatically. Then you may compile them regularly with the below given code:
+javac *.java
+Finally, you must execute the below given code to test whether your implementation works correctly:
+java fileName nameOfTestFile.txt
+
+The language:
+<THK-PL Program> ⟶ PROGRAM id; <Declaration Section> <Main Section>
+<Declaration Section> ⟶ VARIABLES [<Variable List>];
+<Variable List> ⟶ <Variable Def> | <Variable Def>, <Variable List>
+<Variable Def> ⟶ <Variable Name> [ EQUALS int_literal ]
+<Variable Name> ⟶ id
+<Main Section> ⟶ STATEMENTS { <Statement>; }
+<Statement> ⟶ <Input Stmt> | <Output Stmt> | <Assignment Stmt>
+<Input Stmt> ⟶ READ 'message' <Variable Name>
+<Output Stmt> ⟶ WRITE 'message' [ <Expression> ]
+<Assignment Stmt> ⟶ <Variable Name> := <Expression>
+<Expression> ⟶ <PrefixExp> | <InfixExp> | <PostfixExp>
+<InfixExp> ⟶ <Term> | <InfixExp> (PLUS | MINUS) <Term>
+<Term> ⟶ <Factor> | <Term> (ASTERISK | SLASH) <Factor>
+<Factor> ⟶ int_literal | <Variable Name> | ( <InfixExp> )
+<PrefixExp> ⟶ <Operator> <PrefixExp> <PrefixExp>
+<PrefixExp> ⟶ int_literal | <Variable Name>
+<PostfixExp> ⟶ <PostfixExp> <PostfixExp> <Operator>
+<PostfixExp> ⟶ int_literal | <Variable Name>
+<Operator> ⟶ ( ADD | SUBTRACT | MULTIPLY | DIVIDE )
+Other key information about the language is as follows.
+• Tokens: Other than keywords, there are three tokens in the language. The first is id which is a letter followed by any number of letters or digits, i.e., ["a"-"z", "A"-"Z"] ( ["a"-"z", "A"-"Z", "0"-"9"] )*. The second is the int_literal which is a sequence of digits between 0-9, with optional sign symbol (e.g., "+" or "-"). The third one is the message, any sequence of characters other than newline, for user interaction.
+• Comments: The rest of any line starting with the text "!!" is comment, therefore it should be skipped. Multi-line comments are not allowed, you don't need to handle them.
