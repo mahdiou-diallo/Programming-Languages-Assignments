@@ -1,0 +1,70 @@
+In this assignment, you are asked to write three programs, all of which will do the same task using a different programming language, namely C, Java and Python (you may only use the native libraries provided with these programming languages). Your programs should read the content of a regular text file, and do a frequency analysis of unigram, bigram and trigram characters. In other words, your programs should find how many unique unigram, bigram and trigram combinations are used in the given text, and prints the most used 20 of them in descending order.
+After implementing all these programs, visit www.gutenberg.org website, choose an e-book to be your text file, and choose the option to download it as a plain text file. Finally, run your codes and share the results in your report.
+Your report should also include your thoughts (feelings) about your experience in doing this assignment. For example, did you have any prior experience in these languages or which programming language would you prefer for this kind of problems from now on? Other than these, simply evaluate these programming languages in terms of programming language evaluation criteria.
+A sample input and output can be as follows. For example, if the file consists of the following text:
+"The cities of Fruit Republic are: Banana, Strawberry, Apple, Orange, Pineapple, Blueberry, Cranberry, Grape, Grapefruit, Pomegranate and Kiwi."
+Your output should be as given below in the next page.
+
+Unigrams:
+" " 17
+"r" 16
+"e" 16
+"a" 14
+"p" 9
+"," 9
+"i" 8
+"n" 7
+"t" 6
+"b" 6
+"u" 4
+"g" 4
+"l" 4
+"f" 3
+"c" 3
+"y" 3
+"o" 3
+"w" 2
+"s" 2
+"k" 1
+Bigrams:
+", " 9
+"ra" 6
+"an" 6
+"e," 4
+"ap" 4
+"a " 3
+"ry" 3
+"na" 3
+"er" 3
+"be" 3
+"y," 3
+"rr" 3
+"gr" 3
+"it" 3
+"g " 2
+"b " 2
+"ru" 2
+"c " 2
+"le" 2
+"pp" 2
+Trigrams:
+"e, " 4
+"err" 3
+"ry," 3
+"ber" 3
+"gra" 3
+"y, " 3
+"ana" 3
+"rry" 3
+"ran" 3
+"ple" 2
+"le," 2
+"fru" 2
+"ppl" 2
+"ape" 2
+"gr " 2
+"app" 2
+", g" 2
+"rui" 2
+"rap" 2
+", p" 2
